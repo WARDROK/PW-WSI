@@ -1,0 +1,146 @@
+[
+    {
+        "B": 0.1,
+        "variables_start": [-7.46]
+    },
+    {
+        "B": 0.1,
+        "variables_start": [-6.55]
+    },
+    {
+        "B": 0.1,
+        "variables_start": [-2.33]
+    },
+    {
+        "B": 0.1,
+        "variables_start": [-0.59]
+    },
+    {
+        "B": 0.1,
+        "variables_start": [5.13]
+    },
+    {
+        "B": 0.1,
+        "variables_start": [9.81]
+    },
+    {
+        "B": 0.3,
+        "variables_start": [-7.46]
+    },
+    {
+        "B": 0.3,
+        "variables_start": [-6.55]
+    },
+    {
+        "B": 0.3,
+        "variables_start": [-2.33]
+    },
+    {
+        "B": 0.3,
+        "variables_start": [-0.59]
+    },
+    {
+        "B": 0.3,
+        "variables_start": [5.13]
+    },
+    {
+        "B": 0.3,
+        "variables_start": [9.81]
+    },
+    {
+        "B": 0.5,
+        "variables_start": [-7.46]
+    },
+    {
+        "B": 0.5,
+        "variables_start": [-6.55]
+    },
+    {
+        "B": 0.5,
+        "variables_start": [-2.33]
+    },
+    {
+        "B": 0.5,
+        "variables_start": [-0.59]
+    },
+    {
+        "B": 0.5,
+        "variables_start": [5.13]
+    },
+    {
+        "B": 0.5,
+        "variables_start": [9.81]
+    },
+    {
+        "B": 1,
+        "variables_start": [-7.46]
+    },
+    {
+        "B": 1,
+        "variables_start": [-6.55]
+    },
+    {
+        "B": 1,
+        "variables_start": [-2.33]
+    },
+    {
+        "B": 1,
+        "variables_start": [-0.59]
+    },
+    {
+        "B": 1,
+        "variables_start": [5.13]
+    },
+    {
+        "B": 1,
+        "variables_start": [9.81]
+    },
+    {
+        "B": 3,
+        "variables_start": [-7.46]
+    },
+    {
+        "B": 3,
+        "variables_start": [-6.55]
+    },
+    {
+        "B": 3,
+        "variables_start": [-2.33]
+    },
+    {
+        "B": 3,
+        "variables_start": [-0.59]
+    },
+    {
+        "B": 3,
+        "variables_start": [5.13]
+    },
+    {
+        "B": 3,
+        "variables_start": [9.81]
+    },
+    {
+        "B": 7,
+        "variables_start": [-7.46]
+    },
+    {
+        "B": 7,
+        "variables_start": [-6.55]
+    },
+    {
+        "B": 7,
+        "variables_start": [-2.33]
+    },
+    {
+        "B": 7,
+        "variables_start": [-0.59]
+    },
+    {
+        "B": 7,
+        "variables_start": [5.13]
+    },
+    {
+        "B": 7,
+        "variables_start": [9.81]
+    }
+]
