@@ -37,15 +37,21 @@ class evolutionary_algorithm:
 
         # find best individual
         best_individual, best_value = self.find_best_individual(actual_individuals_values)
+        best_individual = best_individual.copy()  # copy for data protection
 
         while t < self.t_max:
             temp_pops = self.selection(actual_individuals_values)
             new_pops = self.crossing_and_mutations(temp_pops)
             new_individuals_values = self.compute_individuals_values(new_pops)
             new_best_individual, new_best_value = self.find_best_individual(new_individuals_values)
-            if new_best_value > best_value:
-                best_individual = new_best_individual
-                best_value = new_best_value
+            if self.find_minimum:
+                if new_best_value < best_value:
+                    best_individual = new_best_individual.copy()
+                    best_value = new_best_value
+            else:
+                if new_best_value > best_value:
+                    best_individual = new_best_individual.copy()
+                    best_value = new_best_value
             actual_individuals_values = self.succession(actual_individuals_values, new_individuals_values)
 
             t += 1
@@ -67,7 +73,10 @@ class evolutionary_algorithm:
         """
         Return tuple of best_individuals and its value
         """
-        return max(individuals_values, key=lambda x: x[1])
+        if self.find_minimum:
+            return min(individuals_values, key=lambda x: x[1])
+        else:
+            return max(individuals_values, key=lambda x: x[1])
 
     def selection(self, individuals_values: list[Tuple[list, float]]) -> list[list]:
         """
@@ -91,23 +100,23 @@ class evolutionary_algorithm:
         range_start = 0.0
         for individual, value in individuals_values:
             probability_value = value/sum_of_individuals_values
-            individuals_probability.append((individual, range_start,
-                                            range_start + probability_value))
+            individuals_probability.append(tuple([individual, range_start,
+                                                  range_start + probability_value]))
             range_start += probability_value
 
         # drawing self.pops_amount individuals
         choices = np.random.uniform(0.0, 1.0, self.pops_amount)
         selected_individuals = []
         for choice in choices:
-            for individual, start in individuals_probability:
-                if start <= choice:
+            for individual, start, end in individuals_probability:
+                if start <= choice < end:
                     selected_individuals.append(individual)
                     break
 
         return selected_individuals
 
     def crossing_and_mutations(self, pops: list[list]) -> list[list]:
-        new_pops = [[]]
+        new_pops = []
         # Crossing
         individual_lenght = len(pops[0])
 
@@ -116,29 +125,29 @@ class evolutionary_algorithm:
 
         # Make children for each pair in pops, self.pops_amount % 2 it's for make pair when last don't have
         for i in range(int(self.pops_amount/2) + self.pops_amount % 2):
+            # Set parents
+            parent1 = pops[2*i]
+            # Create pair if last haven't got
+            if i == int(self.pops_amount/2):
+                parent2 = random.choice(pops[:-1])
+            else:
+                parent2 = pops[2*i+1]
+
             # Probability of crossing for pair
             if random.random() < self.p_crossing:
                 # Random selected range to crossing
-                choices = sorted(np.random.randint(0, individual_lenght-1, size=2))
+                choices = sorted(np.random.randint(1, individual_lenght, size=2))
                 while choices[0] == choices[1]:
-                    choices = sorted(np.random.randint(0, individual_lenght-1, size=2))
-
-                # Set parents
-                parent1 = pops[2*i]
-                # Create pair if last haven't got
-                if i == int(self.pops_amount/2):
-                    parent2 = random.choice(pops[:-1])
-                else:
-                    parent2 = pops[2*i+1]
+                    choices = sorted(np.random.randint(1, individual_lenght, size=2))
 
                 # Slice parents
                 start1 = parent1[0:choices[0]]
-                selected_part1 = parent1[choices[0]+1:choices[1]]
-                end1 = parent1[choices[1]+1:]
+                selected_part1 = parent1[choices[0]:choices[1]]
+                end1 = parent1[choices[1]:]
 
                 start2 = parent1[0:choices[0]]
-                selected_part2 = parent2[choices[0]+1:choices[1]]
-                end2 = parent1[choices[1]+1:]
+                selected_part2 = parent2[choices[0]:choices[1]]
+                end2 = parent1[choices[1]:]
 
                 # Make children
                 child1 = start1 + selected_part2 + end1
@@ -147,7 +156,7 @@ class evolutionary_algorithm:
                 # Make maps for setting unique values
                 map1 = {}
                 map2 = {}
-                for f1, f2 in selected_part1, selected_part2:
+                for f1, f2 in zip(selected_part1, selected_part2):
                     map1[f2] = f1
                     map2[f1] = f2
 
@@ -164,6 +173,12 @@ class evolutionary_algorithm:
                     new_pops.append(child1)
                 else:
                     new_pops.extend([child1, child2])
+            else:
+                # Add parent if crosing not occur
+                if i == int(self.pops_amount/2):
+                    new_pops.append(parent1)
+                else:
+                    new_pops.extend([parent1, parent2])
 
         # Mutations
         self.swap_mutation(new_pops)
@@ -207,7 +222,8 @@ class evolutionary_algorithm:
         """
         return self.generational_succession(actual_individuals_values, new_individuals_values)
 
-    def generational_succession(actual_individuals_values: list[Tuple[list, float]],
+    def generational_succession(self,
+                                actual_individuals_values: list[Tuple[list, float]],
                                 new_individuals_values: list[Tuple[list, float]]
                                 ) -> list[Tuple[list, float]]:
         """
