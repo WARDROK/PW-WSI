@@ -1,4 +1,6 @@
 import numpy as np
+import json
+import random
 
 
 def decode_solution(cities_matrix, solution):
@@ -22,3 +24,30 @@ def evaluate_solution(cities_matrix, solution):
 
 def generate_solution(cities_matrix):
     return [0] + np.random.permutation(np.arange(1, len(cities_matrix) - 1)).tolist() + [len(cities_matrix) - 1]
+
+
+def read_from_json(file_path: str) -> dict:
+    try:
+        with open(file_path, 'r') as file:
+            parameters = json.load(file)
+        return parameters
+    except FileNotFoundError:
+        print(f"Plik '{file_path}' nie został znaleziony.")
+        return None
+    except json.JSONDecodeError:
+        print(f"Plik '{file_path}' zawiera błędny format JSON.")
+        return None
+
+
+def make_pops_and_save_as_json(individual: list, number: int, file_path: str) -> None:
+    '''
+    Funtction fo make population from one individual.\n
+    Save list of individuals in .json file
+    '''
+    pops = []
+    for x in range(number):
+        shuffled_range = random.sample(individual[1:-1], len(individual)-2)
+        pops.append([0] + shuffled_range + [individual[-1]])
+
+    with open(file_path, 'w') as file:
+        json.dump({"individuals": pops}, file)

@@ -1,5 +1,5 @@
 {
-    "crossing_probability": 0.9,
-    "mutation_probability": 0.3,
+    "crossing_probability": 0.6,
+    "mutation_probability": 0.2,
     "max_iterations": 100
 }
