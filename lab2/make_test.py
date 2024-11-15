@@ -35,7 +35,7 @@ def make_tests(data, amount: int):
         scores.append(value)
     print(np.mean(scores))
     print(np.std(scores))
-    print("Time:", np.mean(total_time))
+    print("Time:", total_time/amount)
 
     # m_p = [0.9, 0.6, 0.3, 0.2, 0.1, 0.05, 0.01]
     # for x in m_p:
