@@ -21,6 +21,7 @@ class evolutionary_algorithm:
         self.p_mutation = p_mutation
         self.t_max = t_max
         self.find_minimum = find_minimum
+        self.evaluation_func_counter = 0
 
     def compute_solution(self) -> Tuple[list, float]:
         """
@@ -28,6 +29,8 @@ class evolutionary_algorithm:
         """
         # iteration
         t = 0
+        # amout of evaluation_func iteration
+        self.evaluation_func_counter = 0
 
         # set actual population
         actual_pops = self.starting_pops
@@ -41,7 +44,8 @@ class evolutionary_algorithm:
 
         while t < self.t_max:
             temp_pops = self.selection(actual_individuals_values)
-            new_pops = self.crossing_and_mutations(temp_pops)
+            new_pops = self.crossing(temp_pops)
+            self.mutation(new_pops)
             new_individuals_values = self.compute_individuals_values(new_pops)
             new_best_individual, new_best_value = self.find_best_individual(new_individuals_values)
             if self.find_minimum:
@@ -66,6 +70,7 @@ class evolutionary_algorithm:
         individuals_values = []
         for individual in pops:
             individuals_values.append((individual, self.evaluation_func(self.data, individual)))
+            self.evaluation_func_counter += 1
 
         return individuals_values
 
@@ -115,9 +120,8 @@ class evolutionary_algorithm:
 
         return selected_individuals
 
-    def crossing_and_mutations(self, pops: list[list]) -> list[list]:
+    def crossing(self, pops: list[list]) -> list[list]:
         new_pops = []
-        # Crossing
         individual_lenght = len(pops[0])
 
         if individual_lenght <= 3:
@@ -180,10 +184,13 @@ class evolutionary_algorithm:
                 else:
                     new_pops.extend([parent1, parent2])
 
-        # Mutations
-        self.swap_mutation(new_pops)
-
         return new_pops
+
+    def mutation(self, pops: list[list]) -> None:
+        """
+        Mutations individuals in list by specific mutation variant
+        """
+        self.swap_mutation(pops)
 
     def swap_mutation(self, pops: list[list]) -> None:
         """
