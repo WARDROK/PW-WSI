@@ -4,6 +4,34 @@ import random
 
 
 class evolutionary_algorithm:
+    """
+    The `evolutionary_algorithm` class implements an evolutionary algorithm
+    used for optimizing an objective function.
+    It utilizes a population of individuals that are modified over
+    several iterations to find either the minimum or maximum of the given function.
+
+    Initialization Parameters:
+    - `evaluation_func: callable` — A fitness function used to
+    evaluate the quality of each individual in the population.
+    - `data` — Additional data required for computations in the evaluation function.
+    - `starting_pops: list` — A list of initial populations (individuals)
+    from which the evolution process starts.
+    - `pops_amount: int` — The target number of individuals
+    to maintain in each generation of the algorithm.
+    - `p_crossing: float` — The probability of crossover between individuals,
+    determining the creation of offspring.
+    - `p_mutation: float` — The probability of mutating an individual,
+    allowing random changes to explore the solution space.
+    - `t_max: int` — The maximum number of iterations (generations)
+    over which the algorithm will evolve the population.
+    - `find_minimum: bool` — A flag indicating whether the goal is to find the minimum
+    (`True`) or maximum (`False`) of the objective function.
+
+    Class Attributes:
+    - `self.evaluation_func_counter` — Times of the evaluation function has been called
+    during the algorithm's execution.
+"""
+
     def __init__(self,
                  evaluation_func: callable,
                  data,  # data for evaluation function

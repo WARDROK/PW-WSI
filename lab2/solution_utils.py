@@ -1,6 +1,5 @@
 import numpy as np
 import json
-import random
 
 
 def decode_solution(cities_matrix, solution):
@@ -39,15 +38,14 @@ def read_from_json(file_path: str) -> dict:
         return None
 
 
-def make_pops_and_save_as_json(individual: list, number: int, file_path: str) -> None:
+def make_pops_and_save_as_json(data, number: int, file_path: str) -> None:
     '''
     Funtction fo make population from one individual.\n
     Save list of individuals in .json file
     '''
     pops = []
     for x in range(number):
-        shuffled_range = random.sample(individual[1:-1], len(individual)-2)
-        pops.append([0] + shuffled_range + [individual[-1]])
+        pops.append(generate_solution(data))
 
     with open(file_path, 'w') as file:
         json.dump({"individuals": pops}, file)

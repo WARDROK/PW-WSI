@@ -1,13 +1,13 @@
 import argparse
 import pathlib
-import random
-import json
 
 import numpy as np
 import pandas as pd
-from solution_utils import generate_solution, decode_solution, validate_solution, evaluate_solution, read_from_json, make_pops_and_save_as_json
+from solution_utils import (decode_solution, validate_solution,
+                            evaluate_solution, read_from_json,
+                            make_pops_and_save_as_json)
 from evolutionary_algorithm import evolutionary_algorithm
-from make_test import make_tests
+# from make_test import make_tests
 
 MINI_CITIES_NUM = 5
 
@@ -48,9 +48,8 @@ def main():
 
     data = load_data(args)
 
-    if args.make_new_pops or args.problem_size == "mini":
-        solution = generate_solution(data)
-        make_pops_and_save_as_json(solution, 100, "data/pops.json")
+    if args.make_new_pops:
+        make_pops_and_save_as_json(data, 100, "data/pops.json")
 
     data_from_file = read_from_json("data/pops.json")
     pops = data_from_file.get("individuals", [])
@@ -60,13 +59,14 @@ def main():
     mutation_probability = parameters.get('mutation_probability')
     max_iterations = parameters.get('max_iterations')
 
-    # algorithm = evolutionary_algorithm(evaluate_solution, data, pops, len(pops),
-    #                                    crossing_probability, mutation_probability, max_iterations)
-    # solution, value = algorithm.compute_solution()
-    # print(solution, value)
-    # print(decode_solution(data, solution))
+    algorithm = evolutionary_algorithm(evaluate_solution, data, pops, len(pops),
+                                       crossing_probability, mutation_probability, max_iterations)
+    solution, value = algorithm.compute_solution()
+    validate_solution(data, solution)
+    print("Length:", round(value, 2), "km")
+    print(decode_solution(data, solution))
 
-    make_tests(data, 11)
+    # make_tests(data, 10)
 
 
 if __name__ == "__main__":
