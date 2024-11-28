@@ -1,0 +1,9 @@
+{
+    "x": {
+        "type": "human"
+    },
+    "o": {
+        "type": "random"
+    },
+    "gui": true
+}
