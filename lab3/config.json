@@ -1,9 +1,11 @@
 {
     "x": {
-        "type": "human"
+        "type": "random"
     },
     "o": {
         "type": "random"
     },
-    "gui": true
+    "gui": false,
+    "simulation_amount": 20,
+    "pruning_depth": 9
 }

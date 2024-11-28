@@ -5,6 +5,7 @@ import pathlib
 import numpy as np
 
 from gui import GameGUI
+from simulation import GameSimulation
 from game import TicTacToe
 from player import build_player
 
@@ -32,5 +33,5 @@ if __name__ == "__main__":
         gui = GameGUI(game, player_x, player_o)
         gui.mainloop()
     else:
-        # TODO: lab3 - implement non-gui game simulation
-        pass
+        simulation = GameSimulation(game, player_x, player_o, config["simulation_amount"])
+        simulation.mainloop()

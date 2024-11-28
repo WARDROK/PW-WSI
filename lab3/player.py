@@ -41,7 +41,7 @@ class RandomComputerPlayer(Player):
 class MinimaxComputerPlayer(Player):
     def __init__(self, game, config):
         super().__init__(game)
-        # TODO: lab3 - load pruning depth from config
+        self.pruning_depth = config["pruning_depth"]
 
     def get_move(self, event_position):
         # TODO: lab3 - implement algorithm
