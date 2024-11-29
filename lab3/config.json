@@ -1,11 +1,12 @@
 {
     "x": {
-        "type": "random"
+        "type": "minimax",
+        "pruning_depth": 9
     },
     "o": {
-        "type": "random"
+        "type": "minimax",
+        "pruning_depth": 9
     },
     "gui": false,
-    "simulation_amount": 20,
-    "pruning_depth": 9
+    "simulation_amount": 50
 }
