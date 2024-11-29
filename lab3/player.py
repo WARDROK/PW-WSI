@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from game import TicTacToe
-
 
 def build_player(player_config, game):
     assert player_config["type"] in ["human", "random", "minimax"]
@@ -41,17 +39,20 @@ class RandomComputerPlayer(Player):
 
 
 class MinimaxComputerPlayer(Player):
-    def __init__(self, game: TicTacToe, config):
+    def __init__(self, game, config):
         super().__init__(game)
         self.pruning_depth = config["pruning_depth"]
         self.player_sign = ""
+        self.opponent_sign = ""
 
     def get_move(self, event_position):
         if self.player_sign == "":
             if self.game.player_x_turn:
                 self.player_sign = "x"
+                self.opponent_sign = "o"
             else:
                 self.player_sign = "o"
+                self.opponent_sign = "x"
         board = self.game.board
         board_successors_with_moves = self.make_successors_with_moves(board, True)
         moves_with_values = []
@@ -67,14 +68,15 @@ class MinimaxComputerPlayer(Player):
 
         best_move = max(moves_with_values, key=lambda x: x[1])[0]
 
-        return best_move
+        return np.array(best_move)
 
-    def alfa_beta(self, board: np.ndarray, depth, move_max, alfa, beta):
-        winner = self.get_winner(board)
-        if winner:
-            return self.evaluate_terminal_state(winner)
-        # if depth == 0:
-        #     return self.evaluate_state(board, move_max)
+    def alfa_beta(self, board, depth, move_max, alfa, beta):
+
+        # 1000 - Player win, -1000 - Opponent win
+        state_score = self.evaluate_state(board)
+        is_terminal_state = np.all(board != "")
+        if is_terminal_state or depth == 0 or abs(state_score) == 1000:
+            return state_score
 
         successors = self.make_successors_with_moves(board, move_max)
         if move_max:
@@ -94,40 +96,6 @@ class MinimaxComputerPlayer(Player):
                     return beta
             return beta
 
-    def evaluate_terminal_state(self, winner):
-        if winner == "t":
-            return 0
-        if winner == self.player_sign:
-            return 1000
-        else:
-            return -1000
-
-    def get_winner(self, board: np.ndarray):
-        for i in range(len(board[0])):
-            row_unique_elements = np.unique(board[i, :])
-            col_unique_elements = np.unique(board[:, i])
-
-            if len(row_unique_elements) == 1 and row_unique_elements.item() != "":
-                return row_unique_elements.item()
-            if len(col_unique_elements) == 1 and col_unique_elements.item() != "":
-                return col_unique_elements.item()
-
-        diagonal_unique_elements = np.unique(np.diagonal(board))
-        antidiagonal_unique_elements = np.unique(np.diagonal(np.flipud(board)))
-        if len(diagonal_unique_elements) == 1 and diagonal_unique_elements.item() != "":
-            return diagonal_unique_elements.item()
-
-        if (
-            len(antidiagonal_unique_elements) == 1
-            and antidiagonal_unique_elements.item() != ""
-        ):
-            return antidiagonal_unique_elements.item()
-
-        if np.all(board != ""):
-            return "t"
-
-        return ""
-
     def make_successors_with_moves(self, board, move_max):
         if move_max:
             current_sign = "x" if self.player_sign == "x" else "o"
@@ -143,3 +111,70 @@ class MinimaxComputerPlayer(Player):
             successors.append((new_board, tuple(move)))
 
         return successors
+
+    def evaluate_state(self, board):
+        scores = []
+
+        # Evaluate score for each of the 8 lines (3 rows, 3 columns, 2 diagonals)
+        # +1000, +10, +1 for each 3, 2, 1 signs in-a-line for player
+        # -1000, -10, -1 for each 3, 2, 1 signs in-a-line for opponent
+        scores.append(self.evaluate_line((0, 0), (0, 1), (0, 2), board))  # Row 0
+        scores.append(self.evaluate_line((1, 0), (1, 1), (1, 2), board))  # Row 1
+        scores.append(self.evaluate_line((2, 0), (2, 1), (2, 2), board))  # Row 2
+        scores.append(self.evaluate_line((0, 0), (1, 0), (2, 0), board))  # Column 0
+        scores.append(self.evaluate_line((0, 1), (1, 1), (2, 1), board))  # Column 1
+        scores.append(self.evaluate_line((0, 2), (1, 2), (2, 2), board))  # Column 2
+        scores.append(self.evaluate_line((0, 0), (1, 1), (2, 2), board))  # Diagonal 0
+        scores.append(self.evaluate_line((0, 2), (1, 1), (2, 0), board))  # Diagonal 1
+
+        # Player win
+        if 100 in scores:
+            return 1000
+        # Opponent win
+        elif -100 in scores:
+            return -1000
+        else:
+            return sum(scores)
+
+    def evaluate_line(self, cell1, cell2, cell3, board):
+        score = 0
+
+        # First cell
+        if board[cell1] == self.player_sign:
+            score = 1
+        elif board[cell1] == self.opponent_sign:
+            score = -1
+
+        # Second cell
+        if board[cell2] == self.player_sign:
+            if score == 1:  # Cell 1 is player_sign
+                score = 10
+            elif score == -1:  # Cell 1 is opponent_sign
+                return 0
+            else:  # Cell 1 is empty
+                score = 1
+        elif board[cell2] == self.opponent_sign:
+            if score == -1:  # Cell 1 is opponent_sign
+                score = -10
+            elif score == 1:  # Cell 1 is player_sign
+                return 0
+            else:  # Cell 1 is empty
+                score = -1
+
+        # Third cell
+        if board[cell3] == self.player_sign:
+            if score > 0:  # Cell 1 and/or Cell 2 are player_sign
+                score *= 10
+            elif score < 0:  # Cell 1 and/or Cell 2 are opponent_sign
+                return 0
+            else:  # Cell 1 and Cell 2 are empty
+                score = 1
+        elif board[cell3] == self.opponent_sign:
+            if score < 0:  # Cell 1 and/or Cell 2 are opponent_sign
+                score *= 10
+            elif score > 0:  # Cell 1 and/or Cell 2 are player_sign
+                return 0
+            else:  # Cell 1 and Cell 2 are empty
+                score = -1
+
+        return score

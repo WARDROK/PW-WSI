@@ -1,15 +1,13 @@
 import os
-from game import TicTacToe
-from player import Player
 
 
 class GameSimulation:
     def __init__(
         self,
-        game: TicTacToe,
-        player_x: Player,
-        player_o: Player,
-        simulation_amount: int,
+        game,
+        player_x,
+        player_o,
+        simulation_amount
     ):
         self.player_x = player_x
         self.player_o = player_o
