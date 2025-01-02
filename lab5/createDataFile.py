@@ -7,7 +7,6 @@ wine_quality = fetch_ucirepo(id=186)
 # data (as pandas dataframes)
 X = wine_quality.data.features
 Y = wine_quality.data.targets
-# Y = Y.replace({'M': 1, 'B': 0})
 
 # Save to CSV file
 df = pd.concat([Y, X], axis=1)
