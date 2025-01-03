@@ -13,4 +13,4 @@ Y = wine_quality.data.targets
 
 # Save to CSV file
 df = pd.concat([Y, X], axis=1)
-df.to_csv(config["data"]["file_name"], index=False)
+df.to_csv(config["data"]["file_path"], index=False)
