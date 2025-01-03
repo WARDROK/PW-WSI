@@ -1,0 +1,15 @@
+{
+  "data": {
+    "file_path": "data.csv",
+    "test_size": 0.25,
+    "random_seed": 4321
+  },
+  
+  "hidden_layers": [128, 64, 32],
+
+  "training": {
+    "epochs": 1000,
+    "batch_size": 32,
+    "learning_rate": 0.3
+  }
+}

@@ -1,16 +1,22 @@
 import pandas as pd
 import numpy as np
+import json
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error
+
+with open("config.json", "r") as file:
+    config = json.load(file)
 
 
-SEED = 4321
+file_path = config["data"]["file_path"]
+SEED = config["data"]["random_seed"]
 np.random.seed(SEED)
 
 
 # Load data
 
-df = pd.read_csv("data.csv")
+df = pd.read_csv(file_path)
 
 X = df.drop(columns=["quality"]).values
 y = df["quality"].values
@@ -27,7 +33,7 @@ outputs_num = y_one_hot.shape[1]
 inputs_num = D
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y_one_hot, test_size=0.25, random_state=SEED
+    X, y_one_hot, test_size=config["data"]["test_size"], random_state=SEED
 )
 
 
@@ -156,22 +162,29 @@ class NeuralNetworkWineQuality:
         y_pred_class = self.classify(y_pred)
         y_true_class = self.classify(y)
         return y_pred_class, y_true_class
+    
+    def predict(self, X):
+        y_pred = self.forward(X)
+        y_pred_class = self.classify(y_pred)
+        return y_pred_class
 
 
 # Network parameters
-layers = [inputs_num, 64, 32, outputs_num]  # Layers: input -> hidden1 -> ... -> output
+layers = [inputs_num] + config["hidden_layers"]+  [outputs_num]  # Layers: input -> hidden1 -> ... -> output
 nn = NeuralNetworkWineQuality(X_train, y_train, layers)
 
 # Training
-nn.train(epochs=1000, batch_size=64, learning_rate=0.9)
+nn.train(epochs=config["training"]["epochs"], batch_size=config["training"]["batch_size"], learning_rate=config["training"]["learning_rate"])
 
 # Testing
 accuracy = nn.accuracy(X_train, y_train)
 print(f"Accuracy on train set: {accuracy:.4f}")
 accuracy = nn.accuracy(X_test, y_test)
 print(f"Accuracy on test set: {accuracy:.4f}")
-
-
+y_pred = nn.predict(X_test)
+y_true_class = nn.classify(y_test)
+mae = mean_absolute_error(y_true_class, y_pred)
+print(f"Mean absolute error: {mae:.2f}")
 # Predictions
 print("Predictions on test set:")
 y_pred_class, y_true_class = nn.show_predicitons(X_test, y_test)
