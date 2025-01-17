@@ -1,0 +1,12 @@
+{
+    "total_episodes": 200,
+    "learning_rate": 0.8,
+    "gamma": 0.95,
+    "epsilon": 0,
+    "map_size_x": 4,
+    "map_size_y": 12,
+    "seed": 1234,
+    "n_runs": 10,
+    "savefig_folder": "./plots",
+    "start_episode": 10
+}
