@@ -162,7 +162,7 @@ class NeuralNetworkWineQuality:
         y_pred_class = self.classify(y_pred)
         y_true_class = self.classify(y)
         return y_pred_class, y_true_class
-    
+
     def predict(self, X):
         y_pred = self.forward(X)
         y_pred_class = self.classify(y_pred)
@@ -170,11 +170,12 @@ class NeuralNetworkWineQuality:
 
 
 # Network parameters
-layers = [inputs_num] + config["hidden_layers"]+  [outputs_num]  # Layers: input -> hidden1 -> ... -> output
+layers = [inputs_num] + config["hidden_layers"] + [outputs_num]  # Layers: input -> hidden1 -> ... -> output
 nn = NeuralNetworkWineQuality(X_train, y_train, layers)
 
 # Training
-nn.train(epochs=config["training"]["epochs"], batch_size=config["training"]["batch_size"], learning_rate=config["training"]["learning_rate"])
+nn.train(epochs=config["training"]["epochs"], batch_size=config["training"]["batch_size"],
+         learning_rate=config["training"]["learning_rate"])
 
 # Testing
 accuracy = nn.accuracy(X_train, y_train)
